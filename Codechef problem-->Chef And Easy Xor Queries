@@ -1,0 +1,78 @@
+#include<bits/stdc++.h>
+using namespace std;
+ 
+using namespace std;
+ 
+#define NMAX 100100
+#define GMAX 500
+ 
+int A[NMAX],PS[NMAX];
+int N,Q;
+ 
+void ReadInput(){
+    cin>>N>>Q;
+    for(int i=0;i<N;++i)    cin>>A[i];
+    PS[0]=A[0];
+    for(int i=1;i<N;++i)    PS[i]=PS[i-1]^A[i];
+}
+unordered_map<int,int>gcnt[GMAX];
+int gstart[GMAX],gend[GMAX],gxor[GMAX],gid[NMAX];
+int GSIZE,ng;
+ 
+void BuildSqrtDecomposition(){
+    GSIZE=1;
+    while(GSIZE*GSIZE<N) ++GSIZE;
+    ng=0;
+    for(int i=0;i<N;i+=GSIZE){
+        gstart[ng]=i;
+        gend[ng]=i+GSIZE-1;
+        ++ng;
+    }
+    gend[ng-1]=N-1;
+    for(int g=0;g<ng;++g){
+        gxor[g]=0;
+        for(int i=gstart[g];i<=gend[g];++i){
+            ++gcnt[g][PS[i]];
+            gid[i]=g;
+        }
+    }
+}
+ 
+void ProcessQueries(){
+    while(Q--){
+        int type,i,x;
+        cin>>type>>i>>x;
+        --i;
+        const int gi=gid[i];
+        if(type==1){
+            const int qxor=A[i]^x;
+            A[i]=x;
+            for(int j=i;j<=gend[gi];++j){
+                auto it=gcnt[gi].find(PS[j]);
+                --it->second;
+                if(it->second==0) gcnt[gi].erase(it);
+                PS[j]^=qxor;
+                ++gcnt[gi][PS[j]];
+            }
+            for(int gj=gi+1;gj<ng;++gj) gxor[gj]^=qxor;
+        }
+        else{
+            int ans=0;
+            for(int gj=0;gj<gi;++gj){
+                const auto it=gcnt[gj].find(x^gxor[gj]);
+                if(it!=gcnt[gj].end()) ans+=it->second;
+            }
+            for(int j=gstart[gi];j<=i;++j){
+                if((PS[j]^gxor[gi])==x) ++ans;
+            }
+            cout<<ans<<endl;
+        }
+    }
+}
+ 
+int main(){
+    ReadInput();
+    BuildSqrtDecomposition();
+    ProcessQueries();
+    return 0;
+} 
