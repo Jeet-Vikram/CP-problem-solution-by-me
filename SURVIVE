@@ -1,0 +1,44 @@
+#include<bits/stdc++.h>
+using namespace std;
+int main(){
+    int t;
+    cin>>t;
+    int n,k,s;
+    while(t--){
+        cin>>n>>k>>s;
+        if(n==k&&s>=7){
+            cout<<"-1"<<endl;
+            continue;
+        }
+        int l;
+        if(s>=7)
+            l=6;
+        else l=s;
+        
+        int pos=(n-k)*l;
+        
+        if(pos<k&&n!=k){
+            cout<<"-1"<<endl;
+            continue;
+        }
+        int chocolates=n,ans=1;
+        for(int i=1;i<=s;i++){
+            if((i+1)<=s&&(i+1)%7==0&&chocolates<2*k){
+                while(chocolates<2*k){
+                    chocolates+=n;
+                    ans++;
+                }
+            }
+            else if(chocolates<k){
+                while(chocolates<k){
+                    chocolates+=n;
+                    ans++;
+                }
+            }
+            chocolates-=k;
+        }
+        cout<<ans<<endl;
+    }
+    return 0;
+} 
+Comments 
