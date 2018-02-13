@@ -1,0 +1,45 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+int root(int a,int arr[]){
+    while(a!=arr[a]){
+        arr[a]=arr[arr[a]];
+        a=arr[a];
+    }
+    return a;
+}
+
+void merge(int root_a,int root_b,int arr[]){
+    arr[root_a]=root_b;
+}
+
+void make_leader(int a,int b,int arr[]){
+    arr[b]=a;
+    arr[a]=a;
+}
+
+int main(){
+    int n,q;
+    cin>>n>>q;
+    int type,a,b;
+    int arr[n+1];
+    for(int i=1;i<=n;i++)
+        arr[i]=i;
+    while(q--){
+        cin>>type;
+        if(type==1){
+            cin>>a>>b;
+            if(root(a,arr)!=root(b,arr))
+                merge(root(a,arr),root(b,arr),arr);
+        }
+        else if(type==2){
+            cin>>a;
+            make_leader(a,root(a,arr),arr);
+        }
+        else if(type==3){
+            cin>>a;
+            cout<<root(a,arr)<<endl;
+        }
+    }
+    return 0;
+}
